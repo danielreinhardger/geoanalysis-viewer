@@ -73,6 +73,7 @@ Each row: what was chosen, what the alternative was, why, and what it costs. Fig
 |---|---|---|---|
 | **One static HTML file** that opens from disk, with no server and no network request. | A web map with a tile server, or online 3D services. | It can be opened from disk or sent as an attachment (`docs/RENDERING.md` measures both cases). *(inferred:)* it can be archived, nobody's visit is logged, and the same file always shows the same thing. | The file is large (5.47 MB for G2). The data are frozen at export time, so updating means exporting again. |
 | **Rejected: Google Photorealistic 3D Tiles.** | They would look more realistic. | Their terms forbid offline storage and derived content. | The view is built from official data only, which looks plainer. |
+| **A demo page in the repository** (`docs/index.html`, served by GitHub Pages), built by `tools/build_demo.py` without the LUBW layers. | Only build instructions. | People can try the viewer without installing anything. The LUBW layers are left out because their terms for redistribution were not checked. | The demo lacks the protected-area zones. Each rebuild adds about 5.4 MB to the git history. |
 | **German in the viewer, English in code and docs.** | One language throughout. | Rule in `CLAUDE.md`. *(inferred:)* the page's audience is local, contributors to the code may not be. | Two languages to keep apart. |
 
 ### What is real and what is assumed

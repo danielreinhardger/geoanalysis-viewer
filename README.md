@@ -4,6 +4,18 @@ A three.js viewer that shows a site in Baden-Württemberg in 3D from public geod
 
 The export writes one HTML file (about 5.5 MB for G2) that opens offline from disk, without a server and without network requests.
 
+## Try it
+
+**[Open the G2 viewer](https://danielreinhardger.github.io/geoanalysis-viewer/)** in a desktop browser (about 5.4 MB), or download [`docs/index.html`](docs/index.html) and open it from disk. The viewer's text is in German. This demo leaves out the LUBW layers (protected areas, biotopes, water layers), because their terms for redistribution were not checked; a local export includes them.
+
+![Overview of G2 with the scenario heap, from the north, looking south](docs/screenshots/overview.webp)
+
+*Overview with the scenario heap ("Deponie mit Bermen und Kuppe"), trees and buildings from the surface model.*
+
+![Eye-level view from the nearest house in Heiningen, 486 m away](docs/screenshots/eye_level_heiningen.webp)
+
+*Eye level (1.7 m) from the nearest house in Heiningen, 486 m from the site, at true angular size for a screen 50 cm away. As the viewer does from the houses, trees and buildings are off at first, so the land is shown bare.*
+
 ## What is real and what is assumed
 
 - **Real data:** terrain, aerial image, surface heights, tree positions and heights, protected areas, viewpoints at the nearest houses. Each is named with source and retrieval date under "Quellen" in the viewer.
@@ -48,6 +60,8 @@ python -I tools/check_page.py file:///<repo>/exports/G2_3d.html   # open the pag
 | `sites/` | the G2 outline (`g2.geojson`, traced from the site plan, ±4 m) and the heap scenario |
 | `data/reference/dom_corrections.json` | a documented error in the surface model (a steam plume) that the export removes |
 | `docs/RENDERING.md` | how the view is made and where it stops being real; `docs/retrace_lageplan.py` shows how the G2 outline was traced |
+| `docs/DESIGN.md`, `AGENTS.md` | the design decisions and their costs, for people and for coding agents |
+| `docs/index.html`, `docs/screenshots/` | the demo page served by GitHub Pages, built with `tools/build_demo.py` (LUBW layers left out), and the two screenshots |
 
 ## Data and licences
 

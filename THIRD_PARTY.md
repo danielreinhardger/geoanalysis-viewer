@@ -34,12 +34,12 @@ Source: https://raw.githubusercontent.com/mapbox/martini/main/LICENSE, read 23.1
 
 ## Geodata
 
-The repository holds only small derived files in `data/reference/` and `sites/`; each states its source and retrieval date. The export embeds data from:
+The repository holds small derived files in `data/reference/` and `sites/` (each states its source and retrieval date) and the demo page `docs/index.html`. The demo page embeds LGL-BW data (DGM1, DOM1, DOP20, ALKIS residential areas) and the Copernicus DEM horizon ring with their attributions, and three.js with its licence; it leaves out the LUBW layers. A local export embeds data from:
 
 - LUBW (rips-gdi): terms of use at lubw.baden-wuerttemberg.de.
 - LGL-BW (ALKIS, ATKIS, DGM1, DOM1, DOP20): dl-de/by-2-0, "LGL-BW (year) Datenlizenz Deutschland - Namensnennung - Version 2.0, www.lgl-bw.de".
 
-LUBW data are not stored in the repository; they are fetched at run time.
+LUBW data are not stored in the repository, also not in the demo page; they are fetched at run time.
 
 ## Data fetched at run time (not in the repository)
 
