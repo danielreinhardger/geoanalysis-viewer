@@ -1,0 +1,21 @@
+{
+  "note": "Bekannte Fehler im Oberflächenmodell DOM1 (LGL-BW) und wie sie korrigiert werden. Gelesen von geoanalysis_viewer/domfix.py. Koordinaten EPSG:25832, Höhen in m über Gelände (DOM1 minus DGM1).",
+  "corrections": [
+    {
+      "id": "mhkw_goeppingen_dampffahne_2016",
+      "name": "Dampffahne des Müllheizkraftwerks Göppingen",
+      "bbox": [549422, 5392319, 549454, 5392350],
+      "above_ground_m": 25,
+      "set_to": "ground",
+      "keep": {"x": 549426.5, "y": 5392339.0, "radius_m": 3.0,
+               "what": "wahrscheinlich die Schornsteinspitze (Hinweis, nicht verifiziert): flache Fläche von etwa 4 x 4 m bei 99-100 m über Gelände direkt östlich des Kesselhauses"},
+      "evidence": [
+        "DOM1-Kachel dom1_32_549_5392 (Befliegung 22.03.2016): ein unregelmäßiger Körper von etwa 30 x 28 m mit 46 bis 154 m über Gelände östlich des Kesselhauses (Dach 50-52 m). Ein Schornstein ist nur wenige Meter breit; Form und Lage passen zu einer Dampffahne, die bei der Bildzuordnung als Oberfläche erfasst wurde (Hinweis, nicht amtlich bestätigt).",
+        "Zwei veröffentlichte Drohnenfotos vom 1.11.2026 (Bild 10 einer Bildergalerie und ein Ausschnitt mit Blick nach Nordosten): die sichtbare Schornsteinspitze liegt rund 18 Bildpunkte über dem Kesselhausdach bei 20 Bildpunkten Gebäudebreite (52 m quer zur Blickrichtung), also rund 97 m über Gelände; die Dampffahne kann die Spitze teils verdecken. Das passt zu der 99-100 m hohen Fläche im DOM1, nicht zu 154 m.",
+        "Im Körper liegen weitere flache Stellen (etwa 5 x 5 m bei 109-113 m um E 549432/N 5392335 und 113-116 m um E 549434/N 5392327). Seitlicher Abstand quer zur Blickrichtung (17 Grad) von der rechten Kante des Kesselhauses: 6 m für die 99-100-m-Fläche, 13 m und 17 m für die anderen. In den Fotos steht der Schornstein auf Dachhöhe rund 3 m (Bild 10) und 6 m (Ausschnitt) rechts der Kante; das passt nur zur 99-100-m-Fläche. Die anderen werden als Teil der Fahne entfernt."
+      ],
+      "checked": "2026-11-15",
+      "height_source": "Die erhaltene Höhe ist ein DOM1-Wert der Befliegung 2016; dass es die Schornsteinspitze ist, ist eine Folgerung aus Form, Lage und den Fotos. Eine amtliche Höhenangabe wurde nicht gefunden."
+    }
+  ]
+}

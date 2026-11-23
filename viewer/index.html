@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Standort in 3D: Gelände, Schutzgebiete, Schüttkörper-Szenario</title>
+<link rel="stylesheet" href="viewer.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "./vendor/three/three.module.js",
+    "three/addons/controls/OrbitControls.js": "./vendor/three/OrbitControls.js"
+  }
+}
+</script>
+</head>
+<body>
+<div id="stage"><canvas id="view"></canvas></div>
+
+<div id="badge">SZENARIO · KEINE PLANUNG</div>
+<div id="compass" title="Nordpfeil"><div id="needle">N</div></div>
+<div id="loading">Gelände wird geladen …</div>
+<div id="tip" hidden></div>
+
+<button id="panelToggle" aria-controls="panel" aria-expanded="true">Ebenen</button>
+<aside id="panel">
+  <h1 id="title">Standort</h1>
+  <p class="sub" id="subtitle"></p>
+
+  <section>
+    <h2>Ansicht</h2>
+    <div class="btns" id="views">
+      <button data-view="top">Draufsicht</button>
+      <button data-view="N">Blick nach Norden</button>
+      <button data-view="E">Blick nach Osten</button>
+      <button data-view="S">Blick nach Süden</button>
+      <button data-view="W">Blick nach Westen</button>
+    </div>
+    <div class="btns" id="viewpoints"></div>
+    <label class="check" id="surfRow" hidden><input type="checkbox" id="surfOn" checked>Bäume und Gebäude zeigen (Oberflächenmodell)</label>
+    <label class="check" id="ringRow" hidden><input type="checkbox" id="ringOn"><span>Weite Umgebung bis zum Horizont zeigen (bis <span id="ringKm"></span> km, grob: 60-m-Raster)</span></label>
+    <label class="row" id="eyeRow" hidden>Augenhöhe über Gelände <output id="eyeOut">1,7 m</output>
+      <input type="range" id="eyeH" min="1.7" max="15" step="0.1" value="1.7"></label>
+    <label class="check" id="scaleRow" hidden><input type="checkbox" id="scaleOn" checked><span>Maßstabsgetreu: so groß wie mit eigenen Augen</span></label>
+    <p class="note" id="scaleNote" hidden></p>
+    <p class="note" id="eyeNote" hidden>Richtwerte (Annahme, rund 2,8 m je Geschoss): Garten oder Erdgeschoss 1,7 m, 1. Stock etwa 4,5 m, 2. Stock etwa 7,5 m. Der Blickpunkt liegt in der Mitte des Hauses.<br>Steuerung auf Augenhöhe: Ziehen = umsehen; Mausrad, Pfeiltasten oder W/A/S/D = gehen (mit Umschalttaste schneller). Die Augenhöhe bleibt dabei über dem Gelände. Die Ansicht-Knöpfe oben schalten zurück zur Übersicht.</p>
+    <p class="note" id="vpNote" hidden>Augenhöhe 1,7 m. Das Geländemodell enthält keine Gebäude und keinen Bewuchs; die tatsächliche Sicht ist deshalb oft stärker verdeckt.</p>
+    <label class="row">Überhöhung <output id="exagOut">1×</output>
+      <input type="range" id="exag" min="1" max="3" step="0.5" value="1"></label>
+  </section>
+
+  <section>
+    <h2>Schüttkörper <span class="tag">Szenario</span></h2>
+    <label class="check"><input type="checkbox" id="heapOn" checked> Schüttkörper einblenden</label>
+    <label class="row">Form
+      <select id="heapForm">
+        <option value="realistisch">Deponie mit Bermen und Kuppe (nach Vorbildern)</option>
+        <option value="einfach">einfach (Rechenform der Sicht- und Windberechnungen)</option>
+      </select></label>
+    <p class="note" id="formNote"></p>
+    <label class="row">Oberfläche
+      <select id="heapSurf">
+        <option value="betrieb">im Betrieb</option>
+        <option value="rekultiviert">nach Abschluss (begrünt)</option>
+        <option value="neutral">neutral (nur Form)</option>
+      </select></label>
+    <label class="check"><input type="checkbox" id="linesOn"> Höhenlinien je 5 m</label>
+    <label class="row">Höhe über Gelände <output id="hOut"></output>
+      <input type="range" id="heapH" min="0" max="80" step="1" value="30"></label>
+    <label class="row">Böschung <output id="sOut"></output>
+      <input type="range" id="heapS" min="2" max="5" step="0.5" value="3"></label>
+    <label class="row">Abstand zur roten Linie <output id="bOut"></output>
+      <input type="range" id="heapB" min="0" max="120" step="1" value="0"></label>
+    <label class="row" id="bermRow">Bermen (Stufen) in der Böschung <output id="bermOut"></output>
+      <input type="range" id="bermH" min="0" max="20" step="1" value="10"></label>
+    <label class="row" id="bermWRow" hidden>Breite der Berme <output id="bermWOut"></output>
+      <input type="range" id="bermW" min="2" max="10" step="1" value="6"></label>
+    <dl id="heapStats"></dl>
+    <p class="note" id="surfNote"></p>
+    <p class="note" id="heapNote">Rechenmodell, keine Planung: Der Körper steigt vom Rand mit der gewählten Böschung an, bis die gewählte Höhe über dem heutigen Gelände erreicht ist. Höhe, Böschung und Form sind frei wählbare Annahmen und stammen nicht aus Planunterlagen.</p>
+  </section>
+
+  <section>
+    <h2>Ebenen</h2>
+    <label class="check"><input type="checkbox" id="siteOn" checked> <span class="sw" style="background:#e10600"></span> Rote Linie (Suchbereich)</label>
+    <label class="row">Deckkraft der Ebenen <output id="opOut">70 %</output>
+      <input type="range" id="opacity" min="0" max="100" step="5" value="70"></label>
+    <div id="layers"></div>
+  </section>
+
+  <section>
+    <h2>Auswahl</h2>
+    <div id="pick" class="note">In die Karte klicken, um die Flächen an einem Punkt aufzulisten.</div>
+  </section>
+
+  <section>
+    <h2>Quellen und Hinweise</h2>
+    <div id="sources" class="note"></div>
+  </section>
+</aside>
+<script type="module" src="viewer.js"></script>
+</body>
+</html>

@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "geoanalysis-viewer"
+version = "0.1.0"
+description = "3D viewer of a site in Baden-Württemberg from public geodata (LGL-BW, LUBW), with an assumed landfill heap; exports one offline HTML file."
+readme = "README.md"
+license = {text = "GPL-3.0-only"}
+requires-python = ">=3.12"   # developed and tested on 3.14 only; install editable (-e): the package reads viewer/ and sites/ from the repo folder
+dependencies = []            # the vector core (cache, geometry, service clients, reports) is standard library only
+
+[project.optional-dependencies]
+raster = ["numpy", "pillow"]                           # surface model, trees, horizon, single-file viewer
+
+[project.scripts]
+geoanalysis-viewer = "geoanalysis_viewer.cli:main"
+
+[tool.setuptools]
+packages = ["geoanalysis_viewer"]

@@ -1,0 +1,7 @@
+cache/
+data/*/
+!data/reference/
+reports/
+exports/
+__pycache__/
+*.pyc

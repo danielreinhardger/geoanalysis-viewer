@@ -1,0 +1,13 @@
+{
+ "comment": "Start values for the heap scenario in the 3D viewer. Only footprint_ha has a source; height and slope are free assumptions and must stay labelled as such.",
+ "footprint_ha": 28,
+ "footprint_source": "Standortbericht des VRS: rund 28 ha Deponieaufstandsfläche in G2 (Seitenangabe noch nicht geprüft)",
+ "height_m": 30,
+ "slope_n": 3,
+ "note": "Höhe 30 m und Böschung 1 : 3 sind Startwerte ohne Quelle.",
+ "surface_note": "Bekannt ist bisher nur die Art der Abfälle: belasteter Bodenaushub (DK I) und mineralische Abfälle der DK II, vor allem Bau- und Abbruchabfälle; die Bedarfsprognose nennt als Zuwachs ab 2030 asbesthaltige Abfälle, Ersatzbaustoffe und teerhaltigen Straßenaufbruch. Mengenanteile je Fläche, Einbauabschnitte und Abdeckung sind für G2 nicht bekannt; die Darstellung zeigt deshalb nur typische Flächenarten einer laufenden Deponie, keine einzelnen Abfallarten. Asbesthaltige Abfälle sind nicht eigens dargestellt.",
+ "surface_sources": [
+  "Verband Region Stuttgart, Angaben zur Deponiestandortsuche (DK I: belasteter Bodenaushub; DK II: mineralische Abfälle), region-stuttgart.org, abgerufen 14.11.2026",
+  "wat Ingenieurgesellschaft, Abfallmengen- und Bedarfsprognose für den VRS, Kap. 7.4 (Seite nicht geprüft)"
+ ]
+}

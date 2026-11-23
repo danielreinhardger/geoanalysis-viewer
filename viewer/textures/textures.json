@@ -1,0 +1,58 @@
+{
+ "betrieb": {
+  "file": "heap_betrieb.webp",
+  "source": "KI-erzeugt (FLUX 3 Image Klein NVFP4, Black Forest Labs, FLUX Kommunity License; ComfyUI, Seed 113, Upsampler aus; Prompt: Materialfläche aus Bodenaushub, Betonbruch und Asphaltgranulat, senkrecht von oben), 15.11.2026",
+  "input": "klein4_betrieb_s113_00001_.png",
+  "created": "2026-11-15T18:14:16+0100",
+  "synthetic": true
+ },
+ "rekultiviert": {
+  "file": "heap_rekultiviert.webp",
+  "source": "KI-erzeugt (FLUX 3 Image Klein NVFP4, Black Forest Labs, FLUX Kommunity License; ComfyUI, Seed 11, Upsampler aus; Prompt: junge Ansaatwiese auf Oberboden, senkrecht von oben), 15.11.2026",
+  "input": "klein2_rekultiviert_s11_00001_.png",
+  "created": "2026-11-15T18:14:17+0100",
+  "synthetic": true
+ },
+ "betrieb_macro": {
+  "file": "heap_betrieb_macro.webp",
+  "source": "KI-erzeugt (FLUX 3 Image Klein NVFP4, Black Forest Labs, FLUX Kommunity License; ComfyUI, Seed 401, Upsampler aus; Prompt: großflächige Zonen aus Bodenaushub, Bauschutt, Asphaltgranulat und Lehm, senkrecht von oben; großräumige Ergänzung), 15.11.2026",
+  "input": "klein_macro_nb_s401_00001_.png",
+  "created": "2026-11-15T19:10:57+0100",
+  "synthetic": true,
+  "mean_linear": [
+   0.2437,
+   0.1991,
+   0.1464
+  ]
+ },
+ "rekultiviert_macro": {
+  "file": "heap_rekultiviert_macro.webp",
+  "source": "KI-erzeugt (FLUX 3 Image Klein NVFP4, Black Forest Labs, FLUX Kommunity License; ComfyUI, Seed 509, Upsampler aus; Prompt: großflächige Zonen dichter und lückiger Ansaatwiese, senkrecht von oben; großräumige Ergänzung), 15.11.2026",
+  "input": "klein_macro_nr_s509_00001_.png",
+  "created": "2026-11-15T19:10:58+0100",
+  "synthetic": true,
+  "mean_linear": [
+   0.229,
+   0.2652,
+   0.0625
+  ]
+ },
+ "betrieb_nao": {
+  "file": "heap_betrieb_nao.webp",
+  "data": true,
+  "derived_from": "heap_betrieb.webp",
+  "source": "Normalen geschätzt mit Marigold V2 (Comfy-Org/marigold-v2-0, Apache-2.0; Basis Qwen-Image-Edit-2509 int8) in ComfyUI 0.46, Vorlage „Surface Normal Estimation: Marigold V2“, aus heap_betrieb.webp mit 256 px Randwiederholung, 19.11.2026; Höhe daraus integriert, tools/textures/make_pbr.py",
+  "created": "2026-11-19T19:12:44+0100",
+  "synthetic": true,
+  "input": "mg_betrieb.png"
+ },
+ "rekultiviert_nao": {
+  "file": "heap_rekultiviert_nao.webp",
+  "data": true,
+  "derived_from": "heap_rekultiviert.webp",
+  "source": "Normalen geschätzt mit Marigold V2 (Comfy-Org/marigold-v2-0, Apache-2.0; Basis Qwen-Image-Edit-2509 int8) in ComfyUI 0.46, Vorlage „Surface Normal Estimation: Marigold V2“, aus heap_rekultiviert.webp mit 256 px Randwiederholung, 19.11.2026; Höhe daraus integriert, tools/textures/make_pbr.py",
+  "created": "2026-11-19T19:12:45+0100",
+  "synthetic": true,
+  "input": "mg_rekultiviert.png"
+ }
+}
