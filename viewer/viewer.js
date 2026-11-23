@@ -1789,7 +1789,9 @@ const date = (s) => (s ? new Date(s.replace(/([+-]\d\d)(\d\d)$/, "$1:$2")).toLoc
 
 $("title").textContent = scene.site.name;
 $("subtitle").textContent = `Suchbereich ${scene.site.id} · ${fmt(scene.site.area_ha, 1)} ha · Gelände ${fmt(T.z_min)}–${fmt(T.z_max)} m ü. NHN im Ausschnitt`;
-document.title = `${scene.site.id} in 3D: Gelände, Schutzgebiete, Schüttkörper-Szenario`;
+// name protected areas only when the page has some (the public demo leaves the LUBW layers out)
+const hasZones = scene.layers.some((l) => l.group === "Schutzgebiete" && l.features && l.features.length);
+document.title = `${scene.site.id} in 3D: Gelände, ${hasZones ? "Schutzgebiete, " : ""}Schüttkörper-Szenario`;
 
 const layersEl = $("layers");
 let group = null;
