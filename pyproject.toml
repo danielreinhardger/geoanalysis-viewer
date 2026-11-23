@@ -12,7 +12,7 @@ requires-python = ">=3.12"   # developed and tested on 3.14 only; install editab
 dependencies = []            # the vector core (cache, geometry, service clients, reports) is standard library only
 
 [project.optional-dependencies]
-raster = ["numpy", "pillow"]                           # surface model, trees, horizon, single-file viewer
+raster = ["numpy", "pillow", "scipy"]                  # surface model, trees (scipy), horizon, single-file viewer
 
 [project.scripts]
 geoanalysis-viewer = "geoanalysis_viewer.cli:main"

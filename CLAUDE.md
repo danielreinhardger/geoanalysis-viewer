@@ -1,6 +1,6 @@
 # Notes for coding agents and contributors
 
-Read `README.md` (what it does, how to build) and `docs/RENDERING.md` (how the view is made) first.
+Read `README.md` (what it does, how to build) and `docs/RENDERING.md` (how the view is made) first. `AGENTS.md` lists the invariants, where to change what, how the export degrades when something is missing, and what is open; `docs/DESIGN.md` explains the decisions for people.
 
 ## Rules
 

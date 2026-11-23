@@ -15,7 +15,7 @@ The export writes one HTML file (about 5.5 MB for G2) that opens offline from di
 
 ## Build the viewer
 
-Developed and tested only with Python 3.14 under Windows; `pyproject.toml` asks for 3.12 or newer, which is untested. Building the 3D page needs numpy and pillow (`pip install -e .[raster]`); the data clients are standard library only.
+Developed and tested only with Python 3.14 under Windows; `pyproject.toml` asks for 3.12 or newer, which is untested. Building the 3D page needs numpy, pillow and scipy (`pip install -e .[raster]`; without scipy the trees are left out without an error); the data clients are standard library only.
 
 Run from the repository root:
 
@@ -26,7 +26,7 @@ python -m geoanalysis_viewer settlement --site sites/g2.geojson   # nearest hous
 python -m geoanalysis_viewer export-web --site sites/g2.geojson --surface --detail-mpp 0.2 --single
 ```
 
-The last command downloads the LGL height tiles and aerial images it needs (into `data/sources/`), writes the folder version to `exports/G2_web/` and the single file to `exports/G2_3d.html`. `--offline` uses the cache only; the last stderr line, `[cache] hits=… network=…`, shows whether the network was used. The horizon ring beyond the terrain needs the Copernicus DEM tile named in `geoanalysis_viewer/horizon.py` in `data/sources/copdem/`; without it the ring is left out.
+The last command downloads the DGM1 terrain tiles and the aerial images it needs (into `data/sources/`), writes the folder version to `exports/G2_web/` and the single file to `exports/G2_3d.html`. `--offline` uses the cache only; the last stderr line, `[cache] hits=… network=…`, shows whether the network was used. The horizon ring beyond the terrain needs the Copernicus DEM tile named in `geoanalysis_viewer/horizon.py` in `data/sources/copdem/`; without it the ring is left out. `--surface` (buildings and trees) reads the DOM1 tiles `dom1_32_<e>_<n>_2_bw.zip` from `data/sources/dom/opendata/`; no command downloads them yet (the URL is in `geoanalysis_viewer/dgm.py`, `TILE_URLS`), and without them the page shows bare terrain.
 
 Any other site works the same way: a GeoJSON polygon in EPSG:25832 with `tolerance_m` and `source` in its properties, and optionally `<site>_szenario.json` next to it.
 
