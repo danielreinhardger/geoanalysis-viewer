@@ -1,4 +1,4 @@
-"""Build the public demo page docs/index.html (served by GitHub Pages) from an export-web bundle.
+"""Build the public demo page docs/g2.html (GitHub Pages; docs/index.html links it) from an export-web bundle.
 
   python -m geoanalysis_viewer --offline export-web --site sites/g2.geojson --surface --detail-mpp 0.2
   python tools/build_demo.py exports/G2_web
@@ -43,4 +43,4 @@ def main(bundle: Path, out: Path) -> None:
 
 
 if __name__ == "__main__":
-    main(Path(sys.argv[1]), Path(sys.argv[2]) if len(sys.argv) > 2 else ROOT / "docs" / "index.html")
+    main(Path(sys.argv[1]), Path(sys.argv[2]) if len(sys.argv) > 2 else ROOT / "docs" / "g2.html")

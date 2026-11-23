@@ -82,7 +82,7 @@ flowchart TD
 | Heap material | The GPU shader `BAKE_FS` and its CPU twin `bakeMaterial` | Change both, then run `viewer.bakeCompare()` in the console. It must stay within 1/255. |
 | Packing of the single file | `geoanalysis_viewer/singlefile.py` | See the traps below. |
 | Heap assumptions | `sites/<id>_szenario.json` | Each value needs a source or an "assumption" label. |
-| Demo page (GitHub Pages) | `tools/build_demo.py exports/G2_web` writes `docs/index.html` | It must not contain LUBW layers (check: the embedded `scene.json` has no `lubw`). Every rebuild adds about 5.4 MB to history, so rebuild only for visible changes. `docs/.nojekyll` keeps Pages from processing the folder. |
+| Demo page (GitHub Pages) | `tools/build_demo.py exports/G2_web` writes `docs/g2.html`; `docs/index.html` is the hand-written project page that links it | It must not contain LUBW layers (check: the embedded `scene.json` has no `lubw`). Every rebuild adds about 5.4 MB to history, so rebuild only for visible changes. `docs/.nojekyll` keeps Pages from processing the folder. |
 
 ## Degradation
 

@@ -6,7 +6,7 @@ The export writes one HTML file (about 5.5 MB for G2) that opens offline from di
 
 ## Try it
 
-**[Open the G2 viewer](https://danielreinhardger.github.io/geoanalysis-viewer/)** in a desktop browser (about 5.4 MB), or download [`docs/index.html`](docs/index.html) and open it from disk. The viewer's text is in German. This demo leaves out the LUBW layers (protected areas, biotopes, water layers), because their terms for redistribution were not checked; a local export includes them.
+**[Open the G2 viewer](https://danielreinhardger.github.io/geoanalysis-viewer/g2.html)** in a desktop browser (about 5.4 MB), or download [`docs/g2.html`](docs/g2.html) and open it from disk. The [project page](https://danielreinhardger.github.io/geoanalysis-viewer/) has the screenshots and the links to the design notes. The viewer's text is in German. This demo leaves out the LUBW layers (protected areas, biotopes, water layers), because their terms for redistribution were not checked; a local export includes them.
 
 ![Overview of G2 with the scenario heap, from the north, looking south](docs/screenshots/overview.webp)
 
@@ -24,6 +24,29 @@ The export writes one HTML file (about 5.5 MB for G2) that opens offline from di
 - At eye level the view is shown at true angular size for an assumed screen (50 cm away, 0.26 mm per pixel; the viewer states this).
 
 `docs/RENDERING.md` explains how the view is made, which parts are measured and which are assumed, and what it costs.
+
+## Start with an AI coding agent
+
+The repository is written to be picked up by coding agents (Claude Code, Codex and others): `AGENTS.md` holds the invariants, where to change what, and the checks. A prompt to start with, adapted to your goal:
+
+```text
+Clone https://github.com/danielreinhardger/geoanalysis-viewer and read
+AGENTS.md, CLAUDE.md and docs/DESIGN.md before you change anything.
+
+Goal: <what you want, e.g. "build the 3D page for G2 on my computer" or
+"export the viewer for my site, outline in sites/mysite.geojson">.
+
+Rules:
+- Keep the invariants in AGENTS.md: nothing invented where something
+  real exists, the heap is a scenario, every dataset keeps its source
+  and retrieval date.
+- Ask me before installing packages or downloading large files
+  (an LGL height tile is about 12 MB per 2 km block).
+- If the code and AGENTS.md disagree, trust the code and tell me.
+
+When you are done, run the checks under "Verify" in AGENTS.md, show me
+their output, and say which checks you could not run.
+```
 
 ## Build the viewer
 
@@ -61,7 +84,7 @@ python -I tools/check_page.py file:///<repo>/exports/G2_3d.html   # open the pag
 | `data/reference/dom_corrections.json` | a documented error in the surface model (a steam plume) that the export removes |
 | `docs/RENDERING.md` | how the view is made and where it stops being real; `docs/retrace_lageplan.py` shows how the G2 outline was traced |
 | `docs/DESIGN.md`, `AGENTS.md` | the design decisions and their costs, for people and for coding agents |
-| `docs/index.html`, `docs/screenshots/` | the demo page served by GitHub Pages, built with `tools/build_demo.py` (LUBW layers left out), and the two screenshots |
+| `docs/index.html`, `docs/g2.html`, `docs/screenshots/` | GitHub Pages: the project page, the demo viewer (built with `tools/build_demo.py`, LUBW layers left out) and the two screenshots |
 
 ## Data and licences
 
