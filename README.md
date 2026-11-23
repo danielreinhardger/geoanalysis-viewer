@@ -10,11 +10,11 @@ The export writes one HTML file (about 5.5 MB for G2) that opens offline from di
 
 ![Overview of G2 with the scenario heap, from the north, looking south](docs/screenshots/overview.webp)
 
-*Overview with the scenario heap ("Deponie mit Bermen und Kuppe"), trees and buildings from the surface model.*
+*Overview with the scenario heap ("Deponie mit Bermen und Kuppe"), trees and buildings from the surface model, and the wide surroundings up to the horizon ("Weite Umgebung", Copernicus DEM, 60-m grid).*
 
 ![Eye-level view from the nearest house in Heiningen, 486 m away](docs/screenshots/eye_level_heiningen.webp)
 
-*Eye level (1.7 m) from the nearest house in Heiningen, 486 m from the site, at true angular size for a screen 50 cm away. As the viewer does from the houses, trees and buildings are off at first, so the land is shown bare.*
+*Eye level (1.7 m) from the nearest house in Heiningen, 486 m from the site, at true angular size for a screen 50 cm away. As the viewer does from the houses, trees and buildings are off at first, so the land is shown bare. The wide surroundings are on.*
 
 ## What is real and what is assumed
 
