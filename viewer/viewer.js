@@ -71,8 +71,11 @@ for (const L of scene.layers) for (const f of L.features) if (f.polygons) f.box 
 
 // ---------- renderer, scene, camera ----------
 const canvas = $("view");
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+// Phones and tablets have far less graphics memory; iOS reloads the whole page when a tab uses too much.
+// There the model uses smaller textures, a lower pixel ratio and no preserved drawing buffer.
+const lowMem = matchMedia("(pointer: coarse)").matches || (navigator.deviceMemory || 8) <= 4;
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: !lowMem });
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, lowMem ? 1.5 : 2));
 const three = new THREE.Scene();
 // Sky and haze: a dome from a pale, hazy horizon to a blue zenith, and exponential haze in the horizon
 // colour, so distance reads as depth and the edge of the terrain melts into the sky. HAZE is the density
@@ -229,7 +232,7 @@ function thinTerrain() {
 marks.mesh = Math.round(performance.now());
 
 // aerial image: tiles composed onto one canvas (north at the top)
-const maxTex = Math.min(renderer.capabilities.maxTextureSize, 8192);
+const maxTex = Math.min(renderer.capabilities.maxTextureSize, lowMem ? 4096 : 8192);
 const O = scene.ortho;
 const fullW = O.tiles.filter((t) => t.row === 0).reduce((s, t) => s + t.width, 0);
 const fullH = O.tiles.filter((t) => t.col === 0).reduce((s, t) => s + t.height, 0);
@@ -264,7 +267,7 @@ const D = scene.ortho_detail;
 const detailU = { detailMap: { value: null }, detailOn: { value: 0 } };
 async function loadDetail() {
   // a 0.2-m image can be larger than the graphics card allows; then it is scaled down while decoding
-  const ks = D.width ? Math.min(1, maxTex / Math.max(D.width, D.height)) : 1;
+  const ks = D.width ? Math.min(1, (lowMem ? 2048 : maxTex) / Math.max(D.width, D.height)) : 1;   // 0.2-m image: about 145 MB at full size
   const img = await createImageBitmap(await (await fetch(`${base}/${D.file}`)).blob(), ks < 1
     ? { imageOrientation: "flipY", resizeWidth: Math.floor(D.width * ks), resizeHeight: Math.floor(D.height * ks), resizeQuality: "high" }
     : { imageOrientation: "flipY" });
@@ -1857,7 +1860,7 @@ const srcRows = [
     ? `Relief der Oberfläche des Schüttkörpers (Licht und Schatten im Kleinen): ${esc(x.source)}; keine gemessene Oberfläche.`
     : `Oberfläche des Schüttkörpers: erzeugtes Bild, kein Foto (${esc(x.source)}).`),
   `Luftbild: DOP20, ${esc(O.attribution)}; abgerufen ${date(O.fetched_at)}; hier ${fmt(O.mpp, 1)} m je Bildpunkt` +
-    (O.core ? ` in ${fmt((O.core.width * O.core.mpp) / 1000, 1)} × ${fmt((O.core.height * O.core.mpp) / 1000, 1)} km um den Standort und die Perspektiven, außerhalb ${fmt(O.core.outer_mpp, 1)} m (für diese Datei verkleinert)` : "") +
+    (O.core ? ` in ${fmt((O.core.width * O.core.mpp) / 1000, 1)} × ${fmt((O.core.height * O.core.mpp) / 1000, 1)} km um den Standort und die Perspektiven, außerhalb ${fmt(O.core.outer_mpp, 1)} m (verkleinert für kürzere Ladezeit)` : "") +
     (D ? `, im Nahbereich (${fmt((D.bbox[2] - D.bbox[0]) / 1000, 2)} × ${fmt((D.bbox[3] - D.bbox[1]) / 1000, 2)} km um G2) ${fmt(D.mpp, 1)} m je Bildpunkt, abgerufen ${date(D.fetched_at)}` : "") + ".",
   ...scene.layers.filter((L) => L.features.length).map((L) => `${esc(L.label)}: ${esc(L.attribution)}; ${esc(L.date_kind)} ${date(L.date)}.`),
   scene.analysis ? `Überlappungen und Abstände: Auswertung vom ${date(scene.analysis.generated)}, Umkreis ${fmt(scene.analysis.radius_m)} m. Werte innerhalb der Toleranz gelten als „berührt“.` : "",
