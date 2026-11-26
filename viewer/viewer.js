@@ -245,8 +245,14 @@ await Promise.all(O.tiles.map(async (t) => {
   const img = await createImageBitmap(await (await fetch(`${base}/${t.file}`)).blob());
   const x = O.tiles.filter((u) => u.row === t.row && u.col < t.col).reduce((s, u) => s + u.width, 0);
   const y = O.tiles.filter((u) => u.col === t.col && u.row < t.row).reduce((s, u) => s + u.height, 0);
-  octx.drawImage(img, x * k, y * k, t.width * k, t.height * k);
+  octx.drawImage(img, x * k, y * k, t.width * k, t.height * k);   // the single file holds the tiles at lower resolution
 }));
+// single file: the tiles are coarser there (singlefile.py, _ortho_files); the full resolution of the box
+// round the site and the viewpoints comes as one image over them
+if (O.core) {
+  const C = O.core, img = await createImageBitmap(await (await fetch(`${base}/${C.file}`)).blob());
+  octx.drawImage(img, C.x * k, C.y * k, C.width * k, C.height * k);
+}
 marks.images = Math.round(performance.now());
 orthoTex.needsUpdate = true;
 // Optional sharper aerial image of the near area (e.g. 0.5 m instead of 1 m per pixel). It is blended
@@ -1851,6 +1857,7 @@ const srcRows = [
     ? `Relief der Oberfläche des Schüttkörpers (Licht und Schatten im Kleinen): ${esc(x.source)}; keine gemessene Oberfläche.`
     : `Oberfläche des Schüttkörpers: erzeugtes Bild, kein Foto (${esc(x.source)}).`),
   `Luftbild: DOP20, ${esc(O.attribution)}; abgerufen ${date(O.fetched_at)}; hier ${fmt(O.mpp, 1)} m je Bildpunkt` +
+    (O.core ? ` in ${fmt((O.core.width * O.core.mpp) / 1000, 1)} × ${fmt((O.core.height * O.core.mpp) / 1000, 1)} km um den Standort und die Perspektiven, außerhalb ${fmt(O.core.outer_mpp, 1)} m (für diese Datei verkleinert)` : "") +
     (D ? `, im Nahbereich (${fmt((D.bbox[2] - D.bbox[0]) / 1000, 2)} × ${fmt((D.bbox[3] - D.bbox[1]) / 1000, 2)} km um G2) ${fmt(D.mpp, 1)} m je Bildpunkt, abgerufen ${date(D.fetched_at)}` : "") + ".",
   ...scene.layers.filter((L) => L.features.length).map((L) => `${esc(L.label)}: ${esc(L.attribution)}; ${esc(L.date_kind)} ${date(L.date)}.`),
   scene.analysis ? `Überlappungen und Abstände: Auswertung vom ${date(scene.analysis.generated)}, Umkreis ${fmt(scene.analysis.radius_m)} m. Werte innerhalb der Toleranz gelten als „berührt“.` : "",

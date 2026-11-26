@@ -4,7 +4,7 @@ Read `README.md` (what it does, how to build) and `docs/RENDERING.md` (how the v
 
 ## Rules
 
-- **Nothing invented where something real exists.** Never upscale the aerial image, never invent houses or trees, never drape map layers on the tree or building surface. Synthetic or AI detail only on the scenario heap, and labelled in the viewer.
+- **Nothing invented where something real exists.** Never upscale the aerial image to add detail (AI or super-resolution; showing it coarser is fine), never invent houses or trees, never drape map layers on the tree or building surface. Synthetic or AI detail only on the scenario heap, and labelled in the viewer.
 - **The heap is a scenario.** Its inputs live in `sites/<id>_szenario.json`, each value sourced or marked as an assumption. No haul ramp or access road (it would imply an access point), no dust plumes.
 - **Cite sources and dates.** Everything the export embeds carries source and retrieval date; the viewer lists them under "Quellen".
 - **No guessed coordinates.** Site outlines come from a plan or an official service, with `tolerance_m` and `source`.

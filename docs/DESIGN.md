@@ -16,7 +16,7 @@ The viewer builds exactly this from public geodata. Everything else follows from
 
 **Principle: the weakest link limits the picture.** Image detail, ground shape, light and lines each need enough quality. A sharp aerial image on a coarse ground looks wrong, and so does a fine ground under a blurry image. Effort goes where the weakest link is (`docs/RENDERING.md`, "First principles").
 
-**Rule: nothing invented where something real exists.** The aerial image is never upscaled. No houses or trees are made up. Synthetic or AI-generated detail appears only on the heap, which is an assumption anyway, and the viewer labels it there.
+**Rule: nothing invented where something real exists.** The aerial image is never upscaled to add detail; away from the site the single file shows it coarser. No houses or trees are made up. Synthetic or AI-generated detail appears only on the heap, which is an assumption anyway, and the viewer labels it there.
 
 ## How data becomes a page
 
@@ -71,9 +71,9 @@ Each row: what was chosen, what the alternative was, why, and what it costs. Fig
 
 | Decision | Alternative | Why | Cost |
 |---|---|---|---|
-| **One static HTML file** that opens from disk, with no server and no network request. | A web map with a tile server, or online 3D services. | It can be opened from disk or sent as an attachment (`docs/RENDERING.md` measures both cases). *(inferred:)* it can be archived, nobody's visit is logged, and the same file always shows the same thing. | The file is large (5.47 MB for G2). The data are frozen at export time, so updating means exporting again. |
+| **One static HTML file** that opens from disk, with no server and no network request. | A web map with a tile server, or online 3D services. | It can be opened from disk or sent as an attachment (`docs/RENDERING.md` measures both cases). *(inferred:)* it can be archived, nobody's visit is logged, and the same file always shows the same thing. | The file is large (3.77 MB for G2). The data are frozen at export time, so updating means exporting again. |
 | **Rejected: Google Photorealistic 3D Tiles.** | They would look more realistic. | Their terms forbid offline storage and derived content. | The view is built from official data only, which looks plainer. |
-| **A demo page in the repository** (`docs/g2.html`, served by GitHub Pages behind the project page `docs/index.html`), built by `tools/build_demo.py` without the LUBW layers. | Only build instructions. | People can try the viewer without installing anything. The LUBW layers are left out because their terms for redistribution were not checked. | The demo lacks the protected-area zones. Each rebuild adds about 5.4 MB to the git history. |
+| **A demo page in the repository** (`docs/g2.html`, served by GitHub Pages behind the project page `docs/index.html`), built by `tools/build_demo.py` without the LUBW layers. | Only build instructions. | People can try the viewer without installing anything. The LUBW layers are left out because their terms for redistribution were not checked. | The demo lacks the protected-area zones. Each rebuild adds about 3.7 MB to the git history. |
 | **German in the viewer, English in code and docs.** | One language throughout. | Rule in `CLAUDE.md`. *(inferred:)* the page's audience is local, contributors to the code may not be. | Two languages to keep apart. |
 
 ### What is real and what is assumed
@@ -126,7 +126,9 @@ flowchart TB
 | **Ground mesh thinned (RTIN)**: a triangle stays large as long as the grid deviates from it by at most 0.15 m, the stated accuracy of DGM1. | Draw the full grid. | It removes triangles that add no information. | 1.16 M → 0.35 M triangles for the ground. Heights read elsewhere can differ from the drawn surface by up to 0.15 m. |
 | **Heap material map rendered on the GPU** once per change, with the CPU version kept as reference and fallback. | CPU only, or GPU only. | The map is rebuilt on every slider change (speed figures are not recorded). The CPU path checks the GPU result (`viewer.bakeCompare()`, at most 1/255 per channel) and steps in where the shader fails to compile. | Two implementations of the same map must be kept in step. |
 | **Packing: base-122 text** instead of base64 inside the HTML. | base64, the usual choice. | It is smaller when the file is opened from disk or sent as an attachment. | 14 % smaller from disk. About 4 % *larger* when served over HTTP with gzip. A custom decoder. |
-| **Images as WebP; the optional near-site and horizon images as AVIF.** Heights are stored as decimetre row differences (rounding ≤ 5 cm, below the DGM1 accuracy). | JPEG and raw heights. | Smaller at equal error. Both AVIF images are optional: a browser without AVIF keeps the 1-m image. | The packer needs numpy and pillow. |
+| **Images as WebP; the optional near-site and horizon images as AVIF.** | JPEG. | Smaller at equal error. Both AVIF images are optional: a browser without AVIF keeps the 1-m image. | The packer needs numpy and pillow. |
+| **Heights predicted from their neighbours; the surface only where the viewer reads it.** Each height is stored as its difference from a plane through three neighbours, mostly in one byte; the surface model only on cells more than 2 m above ground, the only cells the viewer draws from it. | Raw heights, or decimetre row differences (the earlier encoding). | The decoded heights equal those of the row differences (rounding ≤ 5 cm, below the DGM1 accuracy), so the page draws the same picture. | G2: 1,159 → 703 kB. The 2-m threshold exists twice (`TALL_CM` in the viewer, `SURFACE_MIN_CM` in the packer); a test keeps them equal. A later feature that needs the low surface (a sight line over hedges) needs the full grid back. |
+| **The 1-m aerial image at full resolution only near the site.** A box round the site and the house viewpoints plus 300 m keeps 1 m; outside it the single file holds 2 m. | 1 m everywhere, or AVIF for the 1-m image. | Far land covers few screen pixels in the usual views; coarser is not invented. AVIF would cut more but leave a browser without AVIF with no aerial image at all. | G2: 1,908 → 873 kB. Seen from close above, the land outside the box is coarser. The folder version keeps 1 m everywhere. |
 
 ### How the single file starts
 

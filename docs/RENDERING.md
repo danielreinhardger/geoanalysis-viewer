@@ -11,7 +11,7 @@ How true the picture is depends on four things, and the weakest limits the whole
 3. **Light.** The aerial image already holds the sunlight of its flight day. Extra lighting must not cast a second, different shadow across it; only a soft slope shading is right.
 4. **Lines and labels.** They are vectors and are drawn as geometry, so they stay sharp.
 
-One rule holds throughout: **nothing invented appears where something real exists.** The aerial image is never upscaled, and no houses or trees are made up. Synthetic or AI-generated detail is used only on the scenario heap, which is itself an assumption, and the viewer labels it there.
+One rule holds throughout: **nothing invented appears where something real exists.** The aerial image is never upscaled to add detail (away from the site the single file shows it coarser), and no houses or trees are made up. Synthetic or AI-generated detail is used only on the scenario heap, which is itself an assumption, and the viewer labels it there.
 
 ## What is real data
 
@@ -46,13 +46,17 @@ The heap is a scenario, not a plan. Its footprint and slope come from `sites/<ID
 
 ## The single file
 
-`geoanalysis_viewer/singlefile.py` packs the bundle into one page:
+`geoanalysis_viewer/singlefile.py` packs the bundle into one page. For G2 the file is 3.77 MB (the demo without the LUBW layers 3.69 MB). The folder version keeps the original files.
 
-- text files are gzipped; heights become decimetre row differences (rounding ≤ 5 cm, below the DGM1 accuracy), which gzip about three times smaller;
-- the 1-m aerial tiles become WebP q70; the near-area image and the horizon image become AVIF (q40 and q50). Both AVIF images load after the first frame, and the viewer works without them if a browser cannot decode AVIF;
-- everything is carried as 7-bit text (after base-122, K. Albertson 2016) in `<script type="application/octet-stream">` elements and decoded once at start into blob: URLs, so no import map and no request is needed.
+### Encoding
 
-For G2 the file is 5.47 MB. Opened from disk or sent as an attachment it is 14 % smaller than with base64; served over HTTP with gzip it is about 4 % larger (4.98 against 4.79 MB on the wire), because gzip had already removed most of base64's overhead.
+- **Text** (three.js, the viewer, `scene.json`) is gzipped.
+- **Heights** (`_heights`): terrain and surface are rounded to whole decimetres (≤ 5 cm, below the 15 cm accuracy of DGM1 and DOM1); the horizon ring is in decimetres already. Each value is predicted from its neighbours (left + below − below-left), and the difference is stored in one byte, or four when it is large, then gzipped.
+  - The surface is stored as height above the terrain, and only on cells more than 2 m above it: the viewer reads it nowhere else (`TALL_CM` in `viewer.js`, `SURFACE_MIN_CM` in the packer; a test keeps them equal). Elsewhere it decodes to the terrain, so the page draws the same blocks.
+  - G2: terrain 292 → 204 kB, surface 479 → 250 kB, ring 388 → 249 kB, compared with row differences or plain gzip. The decoded heights equal those of the earlier encoding.
+- **The 1-m aerial image** (`_ortho_files`): full resolution only in a box around the site and the house viewpoints plus 300 m (1.9 × 1.8 km for G2); the tiles themselves go in at 2 m, and the viewer draws the 1-m box over them. Both WebP q70. G2: 1,908 → 873 kB. On the land in the screenshots the mean difference is about 1 of 255 per channel in the overview and at eye level from Heiningen, 2 from Eschenbach; seen from close above (350 m) outside the box, fields and tree crown colours are visibly softer (3 of 255).
+- **The near-area image and the horizon image** become AVIF (q40 and q50). Both load after the first frame, and the viewer works without them if a browser cannot decode AVIF. The 1-m image stays WebP, so a browser without AVIF still shows the land.
+- **Everything is carried as 7-bit text** (after base-122, K. Albertson 2016) in `<script type="application/octet-stream">` elements and decoded once at start into blob: URLs, so no import map and no request is needed. Opened from disk or sent as an attachment this is 14 % smaller than base64; served over HTTP with gzip it was about 4 % larger (measured on the 5.47 MB version: 4.98 against 4.79 MB on the wire), because gzip removes most of base64's overhead.
 
 ## Not done
 

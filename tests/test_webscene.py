@@ -123,17 +123,82 @@ class SingleFile(unittest.TestCase):
         self.assertIn('from "__THREE__"', viewer)
         self.assertIn('from "__ORBIT__"', viewer)
         self.assertEqual(files["ortho_0_0.jpg"]["t"], "image/jpeg")
-        # heights: decimetre row differences, decoded as the page does, within 5 cm of the original
-        t = files["terrain.bin"]
-        self.assertEqual(t["delta"], nc)
-        dd = np.frombuffer(gzip.decompress(singlefile.embedded(html, "terrain.bin")), "<i2").reshape(nr, nc)
-        back = np.cumsum(dd.astype(np.int32), axis=1) * 10
-        self.assertLessEqual(int(np.abs(back - cm.astype(np.int32)).max()), 5)
+        # heights: whole decimetres, predicted from the neighbours; decoded within 5 cm of the original
+        h = files["terrain.bin"]["h"]
+        self.assertEqual((h["w"], h["n"], h["p"], h["k"]), (nc, nc * nr, 1, 10))
+        back = singlefile.unheights(gzip.decompress(singlefile.embedded(html, "terrain.bin")), nc, True) * 10
+        self.assertLessEqual(int(np.abs(back - cm.astype(np.int64)).max()), 5)
         self.assertIn("MIT", html[:3000])
         # the embedded text holds no character the HTML parser would change or that could end the element
         for m in re.finditer(r'<script type="application/octet-stream" id="[^"]+">(.*?)</script>', html, re.S):
             self.assertFalse(set(m.group(1)) & set("\0\n\r<"))
         self.assertEqual(singlefile.embedded(html, "ortho_0_0.jpg"), b"\xff\xd8\xff not a real jpeg")
+
+    def test_heights_roundtrip(self):
+        try:
+            import numpy as np
+        except ImportError:
+            self.skipTest("numpy not installed")
+        rng = np.random.default_rng(1)
+        a = np.cumsum(rng.integers(-300, 300, (7, 9)), axis=1) + 4000   # some residuals need the 3-byte escape
+        for predict in (True, False):
+            self.assertTrue(np.array_equal(singlefile.unheights(singlefile._heights(a, predict), 9, predict), a))
+
+    def test_surface_only_where_read(self):
+        """The surface is kept only where the viewer reads it; elsewhere it decodes to the terrain."""
+        import gzip
+        import re
+        import tempfile
+        try:
+            import numpy as np
+        except ImportError:
+            self.skipTest("numpy not installed")
+        root = Path(__file__).resolve().parents[1]
+        tall = re.search(r"const TALL_CM = (\d+);", (root / "viewer" / "viewer.js").read_text(encoding="utf-8"))
+        self.assertEqual(int(tall.group(1)), singlefile.SURFACE_MIN_CM)   # the two must stay equal
+        nc, nr = 4, 2
+        cm = np.full((nr, nc), 30000, "<u2")
+        sm = cm + np.array([[0, 150, 200, 210], [1500, 30, 0, 9000]], "<u2")
+        with tempfile.TemporaryDirectory() as d:
+            b = Path(d)
+            (b / "terrain.bin").write_bytes(cm.tobytes())
+            (b / "surface.bin").write_bytes(sm.tobytes())
+            f = singlefile._height_files(b, {"terrain": {"ncols": nc, "nrows": nr}, "surface": {"file": "surface.bin"}})
+        h = f["surface.bin"]["h"]
+        self.assertEqual(h["base"], "terrain.bin")
+        above = singlefile.unheights(gzip.decompress(f["surface.bin"]["d"]), nc, False) * h["k"]
+        self.assertEqual(above.tolist(), [[0, 0, 0, 210], [1500, 0, 0, 9000]])
+
+    def test_ortho_core(self):
+        """The 1-m image: full resolution only round the site and viewpoints, the tiles at half size."""
+        import io
+        import tempfile
+        from unittest import mock
+        try:
+            from PIL import Image
+        except ImportError:
+            self.skipTest("pillow not installed")
+        # 2 x 2 tiles of 40 x 30 px at 1 m over bbox (0, 0)-(80, 60); row 0 is north: red, row 1 blue
+        tiles = [{"file": f"ortho_{r}_{c}.jpg", "row": r, "col": c, "width": 40, "height": 30} for r in (0, 1) for c in (0, 1)]
+        scene = {"bbox": [0, 0, 80, 60], "ortho": {"mpp": 1.0, "tiles": tiles},
+                 "site": {"rings": [[[60, 40], [65, 40], [65, 45], [60, 45]]]}, "viewpoints": [{"x": 62, "y": 47}]}
+        with tempfile.TemporaryDirectory() as d, mock.patch.object(singlefile, "ORTHO_CORE_PAD_M", 5.0):
+            b = Path(d)
+            for t in tiles:
+                Image.new("RGB", (40, 30), (220, 30, 30) if t["row"] == 0 else (30, 30, 220)).save(b / t["file"], "JPEG")
+            f = singlefile._ortho_files(b, scene)
+        if not f:
+            self.skipTest("no WebP support in pillow")
+        c = scene["ortho"]["core"]
+        # x 60-5 .. 65+5 m, y (north at the top) 60-(47+5) .. 60-(40-5) m
+        self.assertEqual((c["x"], c["y"], c["width"], c["height"]), (55, 8, 16, 18))
+        self.assertEqual((c["mpp"], c["outer_mpp"]), (1.0, 2.0))
+        core = Image.open(io.BytesIO(f["ortho_core.jpg"]["d"])).convert("RGB")
+        self.assertEqual(core.size, (16, 18))
+        r, g, bl = core.getpixel((8, 9))
+        self.assertGreater(r, bl)   # the core lies in the northern (red) row
+        for t in tiles:
+            self.assertEqual(Image.open(io.BytesIO(f[t["file"]]["d"])).size, (20, 15))
 
 
 

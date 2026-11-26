@@ -2,11 +2,11 @@
 
 A three.js viewer that shows a site in Baden-Württemberg in 3D from public geodata: terrain (DGM1), aerial image (DOP20 down to 0.2 m), buildings and trees from the surface model (DOM1), protected areas and water layers (LUBW), and an assumed landfill heap as a scenario. It is built for the landfill search area **G2** (Eschenbach and Heiningen, Landkreis Göppingen) of the Verband Region Stuttgart, and asks one question: how would a heap there look from where people live?
 
-The export writes one HTML file (about 5.5 MB for G2) that opens offline from disk, without a server and without network requests.
+The export writes one HTML file (about 3.8 MB for G2) that opens offline from disk, without a server and without network requests.
 
 ## Try it
 
-**[Open the G2 viewer](https://danielreinhardger.github.io/geoanalysis-viewer/g2.html)** in a desktop browser (about 5.4 MB), or download [`docs/g2.html`](docs/g2.html) and open it from disk. The [project page](https://danielreinhardger.github.io/geoanalysis-viewer/) has the screenshots and the links to the design notes. The viewer's text is in German. This demo leaves out the LUBW layers (protected areas, biotopes, water layers), because their terms for redistribution were not checked; a local export includes them.
+**[Open the G2 viewer](https://danielreinhardger.github.io/geoanalysis-viewer/g2.html)** in a desktop browser (about 3.7 MB), or download [`docs/g2.html`](docs/g2.html) and open it from disk. The [project page](https://danielreinhardger.github.io/geoanalysis-viewer/) has the screenshots and the links to the design notes. The viewer's text is in German. This demo leaves out the LUBW layers (protected areas, biotopes, water layers), because their terms for redistribution were not checked; a local export includes them.
 
 ![Overview of G2 with the scenario heap, from the north, looking south](docs/screenshots/overview.webp)
 
@@ -20,7 +20,7 @@ The export writes one HTML file (about 5.5 MB for G2) that opens offline from di
 
 - **Real data:** terrain, aerial image, surface heights, tree positions and heights, protected areas, viewpoints at the nearest houses. Each is named with source and retrieval date under "Quellen" in the viewer.
 - **Assumed:** the heap. Its footprint and slope come from `sites/g2_szenario.json`, where every value is sourced or marked as an assumption; its surface and fine detail are labelled as illustration (part of it from AI-generated images).
-- Nothing invented appears where something real exists: the aerial image is not upscaled, no houses or trees are made up.
+- Nothing invented appears where something real exists: no detail is added to the aerial image (away from the site the single file shows it coarser), no houses or trees are made up.
 - At eye level the view is shown at true angular size for an assumed screen (50 cm away, 0.26 mm per pixel; the viewer states this).
 
 `docs/RENDERING.md` explains how the view is made, which parts are measured and which are assumed, and what it costs.

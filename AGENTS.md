@@ -10,7 +10,7 @@ State: commit `52b8524` plus uncommitted changes of 23.11.2026 (scipy in the `ra
 ## Invariants (break one and the output is wrong, not just ugly)
 
 1. **Nothing invented where something real exists.**
-   - The aerial image is never upscaled.
+   - The aerial image is never upscaled to add detail (no AI, no super-resolution). Showing it coarser is allowed: the single file holds it at 2 m away from the site.
    - Trees are only placed at measured DOM1 maxima (`trees.find_tops`), with no jitter.
    - Map zones are mixed into the terrain shader (`withOverlay` in `viewer/viewer.js`), never drawn on the surface blocks.
    - AI detail goes only on the heap, labelled.
@@ -82,7 +82,7 @@ flowchart TD
 | Heap material | The GPU shader `BAKE_FS` and its CPU twin `bakeMaterial` | Change both, then run `viewer.bakeCompare()` in the console. It must stay within 1/255. |
 | Packing of the single file | `geoanalysis_viewer/singlefile.py` | See the traps below. |
 | Heap assumptions | `sites/<id>_szenario.json` | Each value needs a source or an "assumption" label. |
-| Demo page (GitHub Pages) | `tools/build_demo.py exports/G2_web` writes `docs/g2.html`; `docs/index.html` is the hand-written project page that links it | It must not contain LUBW layers (check: the embedded `scene.json` has no `lubw`). Every rebuild adds about 5.4 MB to history, so rebuild only for visible changes. `docs/.nojekyll` keeps Pages from processing the folder. |
+| Demo page (GitHub Pages) | `tools/build_demo.py exports/G2_web` writes `docs/g2.html`; `docs/index.html` is the hand-written project page that links it | It must not contain LUBW layers (check: the embedded `scene.json` has no `lubw`). Every rebuild adds about 3.7 MB to history, so rebuild only for visible changes. `docs/.nojekyll` keeps Pages from processing the folder. |
 
 ## Degradation
 
@@ -109,6 +109,8 @@ Checked 23.11.2026. The numpy, scipy and pillow rows: `export-web --offline` run
     - `from 'three'` in `OrbitControls.js`;
     - the `<script type="importmap">` in `viewer/index.html` (found with `str.index`).
   - If a string is missing, it raises `RuntimeError`; a missing import map raises `ValueError`. Changing quote style or adding a third import in `viewer.js` breaks the single file.
+- **The surface threshold exists twice.** The packer stores the surface only where it is more than `SURFACE_MIN_CM` above the terrain, because the viewer reads it only there (`TALL_CM`). Lowering `TALL_CM` alone would draw no blocks between the two values in the single file; `test_surface_only_where_read` fails if they differ.
+- **The single file's 1-m image is not the folder's.** `_ortho_files` embeds the tiles at 2 m plus a 1-m core (`scene.ortho.core`, added to the embedded `scene.json` only). Viewer code that reads the aerial image (tree crown colours, `orthoCanvas`) sees 2 m outside the core there.
 - **Rerunning `export-web` into the same folder** deletes stale `trees.bin`, `canopy_class.bin`, `ring.bin`, `ortho_detail.jpg` and `ringimg_*.jpg` first. A new optional output needs the same cleanup.
 - **`raster.load` caches resampled grids** in `data/sources/<kind>/grid_cache/`. Delete them after changing tiles by hand.
 - **Line endings.** The working copy may be CRLF on Windows; the index is LF (`.gitattributes`: `* text=auto`). Write files with the line ending already in the file.
@@ -119,7 +121,7 @@ Checked 23.11.2026. The numpy, scipy and pillow rows: `export-web --offline` run
 ## Verify
 
 ```powershell
-python -m unittest discover -s tests -q                     # 54 tests, offline
+python -m unittest discover -s tests -q                     # 57 tests, offline
 python -m geoanalysis_viewer --offline export-web --site sites/g2.geojson --surface --detail-mpp 0.2 --single
 python -I tools/check_page.py file:///<repo>/exports/G2_3d.html   # STATE viewer true, REQUESTS [], no EXCEPTION
 ```
@@ -142,6 +144,6 @@ The last stderr line of a command, `[cache] hits=… network=…`, must show `ne
 3. **Tested on Python 3.14 / Windows and one desktop GPU only.**
 4. **Small leftovers:**
    - the `cache.py` docstring names LGRB and Overpass, which this repository does not use;
-   - `singlefile.py` cites a `RENDERING.md` section "Encoding" that does not exist;
+   - `singlefile.py` cites the AVIF measurement of 15.11.2026 under `RENDERING.md`, "Encoding"; that section does not hold it;
    - the `webscene` re-export of `singlefile`.
 5. **Not done**, by choice or for lack of data: see `docs/RENDERING.md`, "Not done".
